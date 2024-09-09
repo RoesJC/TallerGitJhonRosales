@@ -14,8 +14,12 @@
             <label for="numero" class="form-label">Introduce un número entre 0 y 1000:</label>
             <input type="number" class="form-control" id="numero" min="0" max="1000">
         </div>
+        <!-- Botón para convertir a letras en español -->
         <button class="btn btn-primary" onclick="convertir()">Convertir</button>
         <p id="resultado" class="mt-3"></p>
+        <!-- Nuevo botón para traducir a inglés -->
+        <button class="btn btn-secondary mt-3" onclick="traducirAIngles()">Traducir a Inglés</button>
+        <p id="resultado-ingles" class="mt-3"></p>
     </div>
 
     <script>
@@ -48,13 +52,53 @@
             }
         }
 
+        function numeroAIngles(num) {
+            const unidades = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+            const decenas = ['ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const decenas2 = ['twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+            const centenas = ['hundred', 'two hundred', 'three hundred', 'four hundred', 'five hundred', 'six hundred', 'seven hundred', 'eight hundred', 'nine hundred'];
+
+            if (num < 10) {
+                return unidades[num];
+            } else if (num < 20) {
+                return decenas[num - 10];
+            } else if (num < 100) {
+                let unidad = num % 10;
+                let decena = Math.floor(num / 10);
+                return decenas2[decena - 2] + (unidad ? '-' + unidades[unidad] : '');
+            } else if (num < 1000) {
+                let centena = Math.floor(num / 100);
+                let resto = num % 100;
+                if (resto === 0) {
+                    return centena === 1 ? 'one hundred' : centenas[centena - 1];
+                } else {
+                    return (centena === 1 ? 'one hundred' : centenas[centena - 1]) + ' ' + numeroAIngles(resto);
+                }
+            } else if (num === 1000) {
+                return 'one thousand';
+            } else {
+                return 'Number out of range';
+            }
+        }
+
         function convertir() {
             const num = parseInt(document.getElementById('numero').value);
             const resultado = document.getElementById('resultado');
             if (!isNaN(num) && num >= 0 && num <= 1000) {
                 resultado.textContent = `El número ${num} en letras es: ${numeroALetras(num)}`;
+                document.getElementById('resultado-ingles').textContent = ''; // Limpiar traducción previa
             } else {
                 resultado.textContent = 'Por favor, introduce un número válido entre 0 y 1000.';
+            }
+        }
+
+        function traducirAIngles() {
+            const num = parseInt(document.getElementById('numero').value);
+            const resultadoIngles = document.getElementById('resultado-ingles');
+            if (!isNaN(num) && num >= 0 && num <= 1000) {
+                resultadoIngles.textContent = `The number ${num} in words is: ${numeroAIngles(num)}`;
+            } else {
+                resultadoIngles.textContent = 'Please enter a valid number between 0 and 1000.';
             }
         }
     </script>
